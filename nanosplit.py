@@ -17,11 +17,14 @@ def main():
     outputfile = open(args.output, "w")
     for file in file:
         with open(file) as input:
-            #Check if it is a header
+            for line in input:
+                #Check if it is a header
+                if line[0]=='@':
+                    timestamp = line.split("runtime=")[1].split(" ")[0]
+                    print(timestamp)
                 #Check if date is passed, then exit.
             #Else print to output file
     outputfile.close()
-
 
 def get_arguments():
     parser = argparse.ArgumentParser()

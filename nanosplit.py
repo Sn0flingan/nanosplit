@@ -17,15 +17,10 @@ def main():
         raise NameError("Input file is not fastq format or does not exist.")
     #Get start time
     outputfile = open(args.output, "w")
+    limit = ["2018", "05", "15", "16", "53", "30"]
     for file in files:
-        with open(file) as input:
-            for line in input:
-                #Check if it is a header
-                if line[0]=='@':
-                    timestamp = line.split("start_time=")[1].split(" ")[0]
-                    print(timestamp)
-                #Check if date is passed, then exit.
-            #Else print to output file
+        reads_within_limit = get_reads_within_limit(file, limit)
+        outputfile.write(reads_within_limit)
     outputfile.close()
 
 def get_arguments():
@@ -36,7 +31,7 @@ def get_arguments():
     parser.add_argument("-o", "--output", help="name of output file",
                         required=True)
     parser.add_argument("-t", "--runtime",
-                        help="Runtime to include, format HH-MM",
+                        help="Runtime to include, format HH:MM",
                         required=True)
     args = parser.parse_args()
     #Correct for errors in output
@@ -44,7 +39,7 @@ def get_arguments():
         print("WARNING: Output file must be in fastq format, renaming output file")
         args.output = args.output + ".fastq"
     #Check correct runtime format
-    rt = args.runtime.split("-")
+    rt = args.runtime.split(":")
     if len(rt[0])>2 or len(rt[1])>2:
         print("ERROR: Runtime argument (t) should be formatted as HH-MM")
     
@@ -54,5 +49,23 @@ def get_arguments():
         print("Output file: {}".format(args.output))
         print("Runtime: {}".format(args.runtime))
     return args
+
+def get_reads_within_limit(file, limit):
+    reads = ""
+    with open(file) as input:
+        for line in input:
+            #Check if it is a header
+            if line[0]=='@':
+                time = line.split("start_time=")[1].split(" ")[0].strip()
+                if time_within_limit(time, limit):
+                    reads = reads + line
+    return reads
+
+def time_within_limit(time, limit):
+    time_parsed = [time[0:4], time[5:7], time[8:10], time[11:13], time[14:16], time[17:19]]
+    for i in range(0, 5):
+        if float(time_parsed[i])>float(limit[i]):
+            return False
+    return True
 
 main()

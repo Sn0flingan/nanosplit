@@ -16,8 +16,11 @@ def main():
     else:
         raise NameError("Input file is not fastq format or does not exist.")
     #Get start time
+    start_time = ["2018", "05", "15", "14", "33", "30"]
+    limit = get_limit(start_time, args.runtime)
+    print(limit)
+    return
     outputfile = open(args.output, "w")
-    limit = ["2018", "05", "15", "16", "53", "30"]
     for file in files:
         reads_within_limit = get_reads_within_limit(file, limit)
         outputfile.write(reads_within_limit)
@@ -49,6 +52,19 @@ def get_arguments():
         print("Output file: {}".format(args.output))
         print("Runtime: {}".format(args.runtime))
     return args
+
+def get_limit(start_time, runtime):
+    runtime = [float(i) for i in runtime.split(":")]
+    limit = [float(i) for i in start_time]
+    limit[3] = float(start_time[3]) + runtime[0]
+    limit[4] = float(start_time[4]) + runtime[1]
+    while limit[4]>60:
+        limit[4] = limit[4]-60
+        limit[3] += 1
+    while limit[3]>24:
+        limit[3] = limit[3]-24
+        limit[2] += 1
+    return limit
 
 def get_reads_within_limit(file, limit):
     reads = ""

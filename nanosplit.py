@@ -5,6 +5,14 @@ def main():
     args = get_arguments()
     #Read inputfile
     ##Check if multiple files
+    if isdir(args.input):
+        files = [file for file in listdir(args.input)
+                 if isfile(join(args.input, file)) and
+                 (file.split('.')[1]=="fastq" or file.split('.')[1]=="fq")]
+    elif isfile(args.input) and (args.input.split('.')[1]=="fastq" or args.input.split('.')[1]=="fq"):
+        files = [args.input]
+    else:
+        raise NameError("Input file is not fastq format or does not exist.")
     #Get start time
     #Save all reads pre start+runtime
 

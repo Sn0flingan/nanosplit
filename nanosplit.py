@@ -14,7 +14,14 @@ def main():
     else:
         raise NameError("Input file is not fastq format or does not exist.")
     #Get start time
-    #Save all reads pre start+runtime
+    outputfile = open(args.output, "w")
+    for file in file:
+        with open(file) as input:
+            #Check if it is a header
+                #Check if date is passed, then exit.
+            #Else print to output file
+    outputfile.close()
+
 
 def get_arguments():
     parser = argparse.ArgumentParser()
